@@ -126,6 +126,7 @@ import os.path
 import random
 import re
 import sys
+import glob
 
 import numpy as np
 import tensorflow as tf
@@ -172,17 +173,20 @@ def create_image_lists(image_dir, testing_percentage, validation_percentage):
     extensions = sorted(set(os.path.normcase(ext)  # Smash case on Windows.
                             for ext in ['JPEG', 'JPG', 'jpeg', 'jpg', 'png']))
     file_list = []
-    dir_name = os.path.basename(
+    # dir_name = os.path.basename(
         # tf.gfile.Walk() returns sub-directory with trailing '/' when it is in
         # Google Cloud Storage, which confuses os.path.basename().
-        sub_dir[:-1] if sub_dir.endswith('/') else sub_dir)
+    #    sub_dir[:-1] if sub_dir.endswith('/') else sub_dir)
+
+    dir_name = os.path.relpath(sub_dir, image_dir)
 
     if dir_name == image_dir:
       continue
     tf.logging.info("Looking for images in '" + dir_name + "'")
     for extension in extensions:
       file_glob = os.path.join(image_dir, dir_name, '*.' + extension)
-      file_list.extend(tf.gfile.Glob(file_glob))
+      #file_list.extend(tf.gfile.Glob(file_glob))
+      file_list.extend(glob.glob(file_glob))
     if not file_list:
       tf.logging.warning('No files found')
       continue
