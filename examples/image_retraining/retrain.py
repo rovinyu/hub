@@ -113,6 +113,7 @@ tensorflow_model_server --port=9000 --model_name=my_image_classifier \
 ```
 """
 # pylint: enable=line-too-long
+# -- coding: UTF-8 --
 
 from __future__ import absolute_import
 from __future__ import division
@@ -201,7 +202,16 @@ def create_image_lists(image_dir, testing_percentage, validation_percentage):
     training_images = []
     testing_images = []
     validation_images = []
-    for file_name in file_list:
+    resultList = random.sample(range(0, len(file_list)-1), 3)
+    training_images.append(os.path.basename(file_list[resultList[0]]))
+    testing_images.append(os.path.basename(file_list[resultList[1]]))
+    validation_images.append(os.path.basename(file_list[resultList[2]]))
+    new_file_list = []
+    for index in range(len(file_list)):
+        if index not in resultList:
+            new_file_list.append(file_list[index])
+
+    for file_name in new_file_list:
       base_name = os.path.basename(file_name)
       # We want to ignore anything after '_nohash_' in the file name when
       # deciding which set to put an image in, the data set creator has a way of
@@ -1260,7 +1270,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--validation_batch_size',
       type=int,
-      default=100,
+      default=-1,
       help="""\
       How many images to use in an evaluation batch. This validation set is
       used much more often than the test set, and is an early indicator of how
