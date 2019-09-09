@@ -1163,6 +1163,10 @@ def main(_):
 
     if FLAGS.saved_model_dir:
       export_model(module_spec, class_count, FLAGS.saved_model_dir)
+      converter = tf.lite.TFLiteConverter.from_saved_model(FLAGS.saved_model_dir)
+      tflite_model = converter.convert()
+      with open("converted_model.tflite", "wb") as f:
+        f.write(tflite_model)
 
 
 if __name__ == '__main__':
@@ -1335,7 +1339,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--saved_model_dir',
       type=str,
-      default='',
+      default='/tmp/saved_model',
       help='Where to save the exported graph.')
   parser.add_argument(
       '--logging_verbosity',
