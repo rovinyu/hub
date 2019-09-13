@@ -1174,8 +1174,10 @@ def main(_):
     if FLAGS.saved_model_dir:
       export_model(module_spec, class_count, FLAGS.saved_model_dir)
       converter = tf.lite.TFLiteConverter.from_saved_model(FLAGS.saved_model_dir)
+      converter.optimizations = [tf.lite.Optimize.DEFAULT]
       tflite_model = converter.convert()
-      with open("converted_model.tflite", "wb") as f:
+      converted_model_file = os.path.join(FLAGS.saved_model_dir, "inception_v3_quant.tflite")
+      with open(converted_model_file, "wb") as f:
         f.write(tflite_model)
 
 
